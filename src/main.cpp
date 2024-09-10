@@ -4,10 +4,14 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include "WiFi.h"
+#include <DHT.h>
 
 // The MQTT topics that this device should publish/subscribe
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+
+// DHT
+DHT dht(33, DHT11);
 
 WiFiClientSecure net = WiFiClientSecure();
 PubSubClient client = PubSubClient(net);
@@ -83,6 +87,7 @@ void messageHandler(char* topic, byte* payload, unsigned int length) {
 void setup() {
   Serial.begin(9600);
   connectAWS();
+  dht.begin();
 }
 
 void loop() {
@@ -91,5 +96,16 @@ void loop() {
   }
   publishMessage();
   client.loop();
+
+  float temp = dht.readTemperature();
+  float humidity = dht.readHumidity();
+
+  Serial.print("Temp: ");
+  Serial.print(temp);
+  Serial.print(" C | ");
+  Serial.print("Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" % ");
+
   delay(1000);
 }
