@@ -5,16 +5,11 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <DHT.h>
-#include <Pangodream_18650_CL.h>
+#include "functions.h"
 
 // The MQTT topics that this device should publish/subscribe
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
-
-#define VBAT_PIN 35
-#define BATTV_MAX    4.1     // maximum voltage of battery
-#define BATTV_MIN    3.2     // what we regard as an empty battery
-#define BATTV_LOW    3.4     // voltage considered to be low battery
 
 // DHT
 DHT dht(33, DHT11);
