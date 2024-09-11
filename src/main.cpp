@@ -5,10 +5,16 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <DHT.h>
+#include <Pangodream_18650_CL.h>
 
 // The MQTT topics that this device should publish/subscribe
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+
+#define VBAT_PIN 35
+#define BATTV_MAX    4.1     // maximum voltage of battery
+#define BATTV_MIN    3.2     // what we regard as an empty battery
+#define BATTV_LOW    3.4     // voltage considered to be low battery
 
 // DHT
 DHT dht(33, DHT11);
@@ -61,6 +67,7 @@ void publishMessage()
   StaticJsonDocument<200> doc;
   doc["time"] = millis();
   doc["sensor_a0"] = analogRead(32);
+  doc["battery"] = analogRead(35);
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
 
@@ -99,6 +106,7 @@ void loop() {
 
   float temp = dht.readTemperature();
   float humidity = dht.readHumidity();
+  float battv = ((float)analogRead(VBAT_PIN) / 4095) * 3.3 * 2 * 1.05;
 
   Serial.print("Temp: ");
   Serial.print(temp);
@@ -106,6 +114,9 @@ void loop() {
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" % ");
+  
+  Serial.print("batt: ");
+  Serial.print(battv);
 
   delay(1000);
 }
