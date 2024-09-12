@@ -1,5 +1,6 @@
 #include <Pangodream_18650_CL.h>
 #include <Arduino.h>
+#include "functions.h"
 
 #define VBAT_PIN 35
 #define BATTV_MAX    4.1     // maximum voltage of battery
@@ -10,5 +11,5 @@ void get_battery_level(){
     float battv = ((float)analogRead(VBAT_PIN) / 4095) * 3.3 * 2 * 1.05;
 
     Serial.print("batt: ");
-    Serial.print(battv);
+    Serial.println(battv);
 }

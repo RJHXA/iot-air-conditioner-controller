@@ -101,7 +101,6 @@ void loop() {
 
   float temp = dht.readTemperature();
   float humidity = dht.readHumidity();
-  float battv = ((float)analogRead(VBAT_PIN) / 4095) * 3.3 * 2 * 1.05;
 
   Serial.print("Temp: ");
   Serial.print(temp);
@@ -110,8 +109,7 @@ void loop() {
   Serial.print(humidity);
   Serial.println(" % ");
   
-  Serial.print("batt: ");
-  Serial.print(battv);
+  get_battery_level();
 
   delay(1000);
 }
