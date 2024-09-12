@@ -1,1 +1,2 @@
-# iot-car-proximity-sensor
+# iot-AWS-room-thermometer
+
