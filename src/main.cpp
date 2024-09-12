@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <DHT.h>
+#include "functions.h"
 
 // The MQTT topics that this device should publish/subscribe
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
@@ -61,6 +62,7 @@ void publishMessage()
   StaticJsonDocument<200> doc;
   doc["time"] = millis();
   doc["sensor_a0"] = analogRead(32);
+  doc["battery"] = analogRead(35);
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
 
@@ -99,6 +101,7 @@ void loop() {
 
   float temp = dht.readTemperature();
   float humidity = dht.readHumidity();
+  float battv = ((float)analogRead(VBAT_PIN) / 4095) * 3.3 * 2 * 1.05;
 
   Serial.print("Temp: ");
   Serial.print(temp);
@@ -106,6 +109,9 @@ void loop() {
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" % ");
+  
+  Serial.print("batt: ");
+  Serial.print(battv);
 
   delay(1000);
 }
