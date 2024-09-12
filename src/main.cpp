@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <DHT.h>
+
 #include "functions.h"
 
 // The MQTT topics that this device should publish/subscribe
@@ -111,5 +112,5 @@ void loop() {
   
   get_battery_level();
 
-  delay(1000);
+  delay(6000);
 }
