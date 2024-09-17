@@ -5,12 +5,15 @@
 #include <ArduinoJson.h>
 #include "WiFi.h"
 #include <DHT.h>
-
-#include "functions.h"
+#include <Battery18650Stats.h>
 
 // The MQTT topics that this device should publish/subscribe
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+#define ADC_PIN 35
+//SSD1306Wire display(0x3c, 5, 4);
+
+Battery18650Stats battery(ADC_PIN);
 
 // DHT
 DHT dht(33, DHT11);
@@ -60,15 +63,17 @@ void connectAWS()
 
 void publishMessage()
 {
-  StaticJsonDocument<200> doc;
-  doc["time"] = millis();
-  doc["sensor_a0"] = analogRead(32);
-  doc["battery"] = analogRead(35);
+  DynamicJsonDocument doc(200);
+  doc["Temp"] = dht.readTemperature();
+  doc["Humidity"] = dht.readHumidity();
+  doc["Volts"] = battery.getBatteryVolts();
+  doc["Charge Level"] = battery.getBatteryChargeLevel();
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
 
   client.publish(AWS_IOT_PUBLISH_TOPIC, jsonBuffer);
 }
+
 
 void messageHandler(char* topic, byte* payload, unsigned int length) {
   Serial.print("Incoming message: ");
@@ -109,8 +114,6 @@ void loop() {
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" % ");
-  
-  get_battery_level();
 
-  delay(6000);
+  delay(5000);
 }
