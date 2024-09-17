@@ -23,8 +23,10 @@ void get_battery_level() {
   Serial.println(battery.getBatteryVolts());
 
   Serial.print("Charge level: ");
-  Serial.println(battery.getBatteryChargeLevel());
+  Serial.print(battery.getBatteryChargeLevel());
+  Serial.println("%");
 
   Serial.print("Charge level (using the reference table): ");
-  Serial.println(battery.getBatteryChargeLevel(true));
+  Serial.print(battery.getBatteryChargeLevel(true));
+  Serial.println("%");
 }
