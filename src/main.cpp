@@ -6,14 +6,20 @@
 #include "WiFi.h"
 #include <DHT.h>
 #include <Battery18650Stats.h>
+#include <Wire.h>
+#include "SSD1306Wire.h" 
+#include "Aclonica_Regular_36.h"
+#include "Aclonica_Regular_16.h"
 
 // The MQTT topics that this device should publish/subscribe
 #define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
 #define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
 #define ADC_PIN 35
-//SSD1306Wire display(0x3c, 5, 4);
+
+SSD1306Wire display(0x3c, 5, 4);
 
 Battery18650Stats battery(ADC_PIN);
+
 
 // DHT
 DHT dht(33, DHT11);
@@ -85,17 +91,39 @@ void messageHandler(char* topic, byte* payload, unsigned int length) {
     message += (char)payload[i];
   }
   Serial.println(message);
-
-  // Optionally deserialize the JSON payload here
-  // StaticJsonDocument<200> doc;
-  // deserializeJson(doc, message);
-  // const char* msg = doc["message"];
 }
 
 void setup() {
   Serial.begin(9600);
   connectAWS();
   dht.begin();
+
+  // Initialising the UI will init the display too.
+  display.init();
+  display.resetDisplay();
+  display.flipScreenVertically();
+  display.setFont(ArialMT_Plain_10);
+}
+
+void showDisplay() {
+  int temp = dht.readTemperature();
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(Aclonica_Regular_36);
+  display.drawString(0, 0, String(temp) + "ºC");
+
+  int humidity = dht.readHumidity();
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(Aclonica_Regular_16);
+  display.drawString(0, 40, "hum: " + String(humidity) + "%");
+
+  int progress = battery.getBatteryChargeLevel();
+
+  display.drawProgressBar(95, 52, 30, 10, progress);
+
+  // draw the percentage as String
+  display.setTextAlignment(TEXT_ALIGN_CENTER);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(111, 40, String(progress) + "%");
 }
 
 void loop() {
@@ -114,6 +142,18 @@ void loop() {
   Serial.print("Humidity: ");
   Serial.print(humidity);
   Serial.println(" % ");
-
+  Serial.print("Battery level: ");
+  Serial.print(battery.getBatteryChargeLevel());
+  Serial.println("%");
+   Serial.print("Battery level: ");
+  Serial.print(battery.getBatteryVolts());
+  Serial.println(".");
+  // clear the display
+  display.clear();
+  // draw the current demo method
+  //demos[demoMode]();
+  showDisplay();
+  display.display();
   delay(5000);
+  
 }
