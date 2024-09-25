@@ -20,7 +20,6 @@ SSD1306Wire display(0x3c, 5, 4);
 
 Battery18650Stats battery(ADC_PIN);
 
-
 // DHT
 DHT dht(33, DHT11);
 
@@ -155,5 +154,4 @@ void loop() {
   showDisplay();
   display.display();
   delay(5000);
-  
 }
