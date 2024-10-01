@@ -12,9 +12,10 @@
 #include "Aclonica_Regular_16.h"
 
 // The MQTT topics that this device should publish/subscribe
-#define AWS_IOT_PUBLISH_TOPIC   "esp32/pub"
-#define AWS_IOT_SUBSCRIBE_TOPIC "esp32/sub"
+#define AWS_IOT_PUBLISH_TOPIC   "sala12/sensors"
+#define AWS_IOT_SUBSCRIBE_TOPIC "sala12/display"
 #define ADC_PIN 35
+#define SENSOR_LOCATION "By the door corner"
 
 SSD1306Wire display(0x3c, 5, 4);
 
@@ -74,6 +75,7 @@ void publishMessage()
   doc["Humidity"] = dht.readHumidity();
   doc["Volts"] = battery.getBatteryVolts();
   doc["Charge Level"] = battery.getBatteryChargeLevel();
+  doc["Sensor location"] = SENSOR_LOCATION;
   char jsonBuffer[512];
   serializeJson(doc, jsonBuffer);
 
