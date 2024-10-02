@@ -157,5 +157,4 @@ void loop() {
   showDisplay();
   display.display();
   delay(5000);
-  
 }
